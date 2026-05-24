@@ -85,6 +85,8 @@ kubectl delete ns just-auth
 
 ## Run Lab 3 - Helm
 
+Using Helm to orchestrate the application runtime seamlessly across a cluster of machines (local or remote).
+
 ### Prerequisites
 
 - [Helm](https://helm.sh/) installed and running
@@ -187,4 +189,81 @@ GHCR_TOKEN=
 
 # your github-username
 GH_USERNAME=
+```
+
+## Run Lab 4 - Kustomize
+
+Using Kustomize to orchestrate the application runtime seamlessly across a cluster of machines (local or remote).
+
+### Prerequisites
+
+- [Minikube](https://minikube.sigs.k8s.io/) installed and running (for local clusters) or
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/) installed and running or 
+- [Kind](https://kind.sigs.k8s.io/) installed and running (for local clusters) or 
+- [Microk8s](https://microk8s.io/) installed and running (for local clusters) or 
+- Access to a Kubernetes cluster (remote)
+- [kubectl](https://kubernetes.io/docs/tasks/tools/) installed and context configured
+- [kustomize](https://kubectl.docs.kubernetes.io/installation/kustomize/binaries/) installed
+- Access to the internet to pull images
+
+### Directory Structure for kustomize
+
+```text
+kustomize/
+├── base/
+│   ├── backend-deployment.yaml
+│   ├── backend-service.yaml
+│   ├── configmap.yaml
+│   ├── frontend-deployment.yaml
+│   ├── frontend-service.yaml
+│   ├── kustomization.yaml
+│   ├── postgres-deployment.yaml
+│   ├── postgres-init-configmap.yaml
+│   ├── postgres-service.yaml
+│   └── pvc.yaml
+└── overlays/
+    ├── dev/
+    │   ├── image-patch.yaml
+    │   ├── kustomization.yaml
+    │   ├── replica-patch.yaml
+    │   ├── service-patch.yaml
+    │   └── storage-patch.yaml
+    ├── staging/
+    │   ├── image-patch.yaml
+    │   ├── kustomization.yaml
+    │   ├── replica-patch.yaml
+    │   ├── service-patch.yaml
+    │   └── storage-patch.yaml
+    └── prod/
+        ├── image-patch.yaml
+        ├── kustomization.yaml
+        ├── replica-patch.yaml
+        ├── service-patch.yaml
+        └── storage-patch.yaml
+```
+
+### Commands
+
+```bash
+# confirm prerequisites
+kubectl --version
+
+# navigate to the project directory
+cd just-auth
+
+# run workflow.sh to build and push images to GHCR for dev environment
+# first ensure this file is executable
+chmod +x workflow.sh
+# then run it for dev environment (change "dev" to "staging" or "prod" for other environments)
+# the script will build and push images for the specified environment
+# It will also tag the images with the environment name and the commit SHA
+bash workflow.sh dev 
+
+# run workflow.sh to build and push images to GHCR for staging environment
+bash workflow.sh staging
+
+# run workflow.sh to build and push images to GHCR for production environment
+bash workflow.sh prod
+
+# follow the instructions in the kustomize README.md
 ```

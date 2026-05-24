@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: postgres
+  template:
+    metadata:
+      labels:
+        component: postgres
+    spec:
+      containers:
+      - name: postgres
+        image: postgres-image
+        ports:
+        - containerPort: 5432
+        env:
+        - name: POSTGRES_USER
+          valueFrom:
+            secretKeyRef:
+              name: just-auth-secret
+              key: DB_USER
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: just-auth-secret
+              key: DB_PASSWORD
+        - name: POSTGRES_DB
+          valueFrom:
+            configMapKeyRef:
+              name: just-auth-config
+              key: DB_NAME
+        volumeMounts:
+        - name: postgres-storage
+          mountPath: /var/lib/postgresql/data
+        - name: init-script
+          mountPath: /docker-entrypoint-initdb.d
+      volumes:
+      - name: postgres-storage
+        persistentVolumeClaim:
+          claimName: postgres-pvc
+      - name: init-script
+        configMap:
+          name: postgres-init
+      imagePullSecrets:
+      - name: ghcr-secret   # although postgres image is public, kept for consistency

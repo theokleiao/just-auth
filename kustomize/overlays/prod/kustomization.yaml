@@ -1,0 +1,42 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: just-auth-prod
+
+resources:
+  - ../../base
+
+patches:
+  # Replica patches
+  - path: replica-patch.yaml
+  # Image patches
+  - path: image-patch.yaml
+  # Storage patch for PVC
+  - path: storage-patch.yaml
+    target:
+      kind: PersistentVolumeClaim
+      name: postgres-pvc
+  # Service patch (NodePort)
+  - path: service-patch.yaml
+    target:
+      kind: Service
+      name: frontend
+
+secretGenerator:
+  - name: just-auth-secret
+    behavior: replace
+    literals:
+      - DB_USER=auth_user
+      - DB_PASSWORD=StrongP@ssw0rd
+      - JWT_SECRET=fhrt264TTfwtagfbfb47ndfnhdabdbd12WQQbnf5
+  - name: ghcr-secret
+    behavior: replace
+    type: kubernetes.io/dockerconfigjson
+    literals:
+      - .dockerconfigjson={"auths":{"ghcr.io":{"username":"fykio","password":"ghp_DUtImrdH7fRiGkvuRVY0kFAZ8kaKsJO20w0lnB","email":"olufemi.akinboye@darey.io","auth":"ZnlraW86Z2hwX0RVdEltcmRIN2ZSaUdrdnVSWTBaRkFaOGthS3NKTzIwMGxuQg=="}}}
+
+configMapGenerator:
+  - name: just-auth-config
+    behavior: merge
+    literals:
+      - CORS_ORIGIN=http://localhost:8888

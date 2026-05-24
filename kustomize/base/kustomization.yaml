@@ -1,0 +1,48 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: just-auth
+
+resources:
+  - backend-deployment.yaml
+  - backend-service.yaml
+  - frontend-deployment.yaml
+  - frontend-service.yaml
+  - postgres-deployment.yaml
+  - postgres-service.yaml
+  - postgres-init-configmap.yaml
+  - configmap.yaml
+  - pvc.yaml
+
+# SecretGenerator for database credentials and JWT secret
+# (imagePullSecret will be added per overlay)
+secretGenerator:
+  - name: just-auth-secret
+    literals:
+      - DB_USER=auth_user
+      - DB_PASSWORD=StrongP@ssw0rd
+      - JWT_SECRET=change_me_in_overlays
+  - name: ghcr-secret
+    type: kubernetes.io/dockerconfigjson
+    literals:
+      - .dockerconfigjson={"auths":{"ghcr.io":{"username":"PLACEHOLDER","password":"PLACEHOLDER","email":"PLACEHOLDER","auth":"PLACEHOLDER"}}}
+
+generatorOptions:
+  disableNameSuffixHash: true   # keep secret names stable
+
+images:
+  - name: backend-image
+    newName: ghcr.io/fykio/just-auth-backend
+    newTag: latest
+  - name: frontend-image
+    newName: ghcr.io/fykio/just-auth-frontend
+    newTag: latest
+  - name: postgres-image
+    newName: postgres
+    newTag: 15-alpine
+
+labels:
+  - pairs:
+      app: just-auth
+    includeSelectors: true
+    includeTemplates: true

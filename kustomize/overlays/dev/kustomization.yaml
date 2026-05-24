@@ -1,0 +1,44 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: just-auth-dev
+
+resources:
+  - ../../base
+
+patches:
+  - path: replica-patch.yaml
+  - path: image-patch.yaml
+  - path: storage-patch.yaml
+    target:
+      kind: PersistentVolumeClaim
+      name: postgres-pvc
+  - path: service-patch.yaml
+    target:
+      kind: Service
+      name: frontend
+
+# Override the secret values from the base using secretGenerator with 'replace' behavior
+secretGenerator:
+  - name: just-auth-secret
+    behavior: replace
+    literals:
+      - DB_USER=auth_user
+      - DB_PASSWORD=StrongP@ssw0rd
+      - JWT_SECRET=fhrt264TTfwtagfbfb47ndfnhdabdbd12WQQbnf5
+  - name: ghcr-secret
+    behavior: replace
+    type: kubernetes.io/dockerconfigjson
+    literals:
+      - .dockerconfigjson={"auths":{"ghcr.io":{"username":"fykio","password":"ghp_DUtImrdH7fRiGkvuRVY0kFAZ8kaKsJO20w0lnB","email":"olufemi.akinboye@darey.io","auth":"ZnlraW86Z2hwX0RVdEltcmRIN2ZSaUdrdnVSWTBaRkFaOGthS3NKTzIwMGxuQg=="}}}
+
+# Override CORS origin for dev
+configMapGenerator:
+  - name: just-auth-config
+    behavior: merge
+    literals:
+      - CORS_ORIGIN=http://localhost:8888
+
+# Keep the PVC storage patch (this is already applied via the patches section above,
+# but if you have a separate storage-patch.yaml file, ensure it contains the size change.
+# The patch above referencing storage-patch.yaml will handle it.
