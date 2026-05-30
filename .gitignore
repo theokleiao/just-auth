@@ -94,3 +94,9 @@ coverage.xml
 .cache/
 .envrc
 .terraform*
+
+# Terraform
+terraform.tfvars
+terraform/*.tfvars
+.terraform/
+!.terraform.lock.hcl

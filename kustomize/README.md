@@ -48,6 +48,7 @@ kubectl port-forward -n just-auth-dev svc/frontend 8888:8888
 
 # Clean up
 kubectl delete all --all -n just-auth-dev
+kubectl delete ns just-auth-dev
 
 # --- for staging environment ---
 # Create the namespace
