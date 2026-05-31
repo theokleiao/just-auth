@@ -12,6 +12,7 @@ resource "aws_vpc" "justauth_vpc" {
   tags = {
     Name        = "${var.project}-vpc"
     Environment = var.environment
+    ManagedBy   = "terraform"
   }
 }
 
@@ -20,7 +21,9 @@ resource "aws_internet_gateway" "igw" {
   vpc_id = aws_vpc.justauth_vpc.id
 
   tags = {
-    Name = "${var.project}-igw"
+    Name        = "${var.project}-igw"
+    Environment = var.environment
+    ManagedBy   = "terraform"
   }
 }
 
@@ -35,6 +38,7 @@ resource "aws_subnet" "public" {
   tags = {
     Name        = "${var.project}-public-subnet"
     Environment = var.environment
+    ManagedBy   = "terraform"
   }
 }
 
@@ -47,6 +51,7 @@ resource "aws_subnet" "private_a" {
   tags = {
     Name        = "${var.project}-private-subnet-a"
     Environment = var.environment
+    ManagedBy   = "terraform"
   }
 }
 
@@ -59,6 +64,7 @@ resource "aws_subnet" "private_b" {
   tags = {
     Name        = "${var.project}-private-subnet-b"
     Environment = var.environment
+    ManagedBy   = "terraform"
   }
 }
 
@@ -73,6 +79,8 @@ resource "aws_route_table" "public" {
 
   tags = {
     Name = "${var.project}-public-rt"
+    Environment = var.environment
+    ManagedBy   = "terraform"
   }
 }
 
@@ -112,7 +120,9 @@ resource "aws_security_group" "ec2_sg" {
   }
 
   tags = {
-    Name = "${var.project}-ec2-sg"
+    Name        = "${var.project}-ec2-sg"
+    Environment = var.environment
+    ManagedBy   = "terraform"
   }
 }
 
@@ -138,6 +148,8 @@ resource "aws_security_group" "rds_sg" {
   }
 
   tags = {
-    Name = "${var.project}-rds-sg"
+    Name        = "${var.project}-rds-sg"
+    Environment = var.environment
+    ManagedBy   = "terraform"
   }
 }

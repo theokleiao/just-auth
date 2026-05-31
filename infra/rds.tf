@@ -5,7 +5,9 @@ resource "aws_db_subnet_group" "private" {
   subnet_ids  = [aws_subnet.private_a.id, aws_subnet.private_b.id]
 
   tags = {
-    Name = "${var.project}-db-subnet-group"
+    Name        = "${var.project}-db-subnet-group"
+    Environment = var.environment
+    ManagedBy   = "terraform"
   }
 }
 
@@ -37,5 +39,6 @@ resource "aws_db_instance" "justauth_rds" {
   tags = {
     Name        = "${var.project}-rds"
     Environment = var.environment
+    ManagedBy   = "terraform"
   }
 }

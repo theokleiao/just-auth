@@ -6,6 +6,13 @@
 - AWS CLI installed and configured: run `aws configure` to configure
 - Terraform installed: run `terraform version` to verify
 
+## Environment Variables
+
+```bash
+touch terraform.tfvars
+# populate this file with every variable in `variables.tf` file.
+```
+
 ## Steps
 
 1. Inspect and review `backend-bootstrap.sh` script.
