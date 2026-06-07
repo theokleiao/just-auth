@@ -3,7 +3,7 @@
   become: yes
   vars:
     ghcr_username: "fykio"                 # Your GitHub username
-    ghcr_token: "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"  # Use Ansible Vault in production
+    ghcr_token: "..."                      # You should use Ansible Vault for production
     project_dir: /home/ubuntu/just-auth
 
   tasks:
